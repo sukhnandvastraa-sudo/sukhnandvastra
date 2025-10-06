@@ -1,0 +1,108 @@
+<!-- partials/navbar.html -->
+<nav class="fixed top-0 left-0 w-full bg-black text-white z-50 shadow-md">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+    <!-- Logo + Brand -->
+    <a href="index.html" class="flex items-center space-x-3">
+      <img src="assets/logo-icon.png" alt="Logo" class="h-10 w-10 object-contain">
+      <span class="font-inter font-bold text-xl text-[#C6A766]">Sukhnand Vastra</span>
+    </a>
+
+    <!-- Desktop Nav Links -->
+<div class="hidden md:flex space-x-8 font-instrument">
+  <a href="index.html" class="nav-link relative" data-page="index.html">Home</a>
+  <a href="shop.html" class="nav-link relative" data-page="shop.html">Shop</a>
+  <a href="rent.html" class="nav-link relative" data-page="rent.html">Rent</a>
+  <a href="collaborate.html" class="nav-link relative" data-page="collaborate.html">Collaborate</a>
+  <a href="about.html" class="nav-link relative" data-page="about.html">About</a>
+  <a href="contact.html" class="nav-link relative" data-page="contact.html">Contact</a>
+  <a href="dashboard.html" id="dashboard-btn" class="nav-link relative" data-page="dashboard.html">Dashboard</a>
+  <a href="cart.html" class="nav-link relative" data-page="cart.html">View Cart</a>
+</div>
+
+
+    <!-- Right Side Buttons -->
+    <div class="hidden md:flex space-x-4 items-center">
+      <button id="logout-btn" class="bg-[#C6A766] text-black px-6 py-2 rounded-md uppercase font-semibold hover:bg-[#b29259] transition">Logout</button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="mobile-menu-toggle" class="md:hidden focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#C6A766]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-black text-white px-6 pb-4 space-y-3 font-instrument">
+  <a href="index.html" class="nav-link block relative py-1" data-page="index.html">Home</a>
+  <a href="shop.html" class="nav-link block relative py-1" data-page="shop.html">Shop</a>
+  <a href="rent.html" class="nav-link block relative py-1" data-page="rent.html">Rent</a>
+  <a href="collaborate.html" class="nav-link block relative py-1" data-page="collaborate.html">Collaborate</a>
+  <a href="contact.html" class="nav-link block relative py-1" data-page="contact.html">Contact</a>
+  <a href="about.html" class="nav-link block relative py-1" data-page="about.html">About</a>
+  <a href="dashboard.html" id="dashboard-btn-mobile" class="nav-link block relative py-1" data-page="dashboard.html">Dashboard</a>
+  <a href="cart.html" class="nav-link block relative py-1" data-page="cart.html">View Cart</a>
+  <button id="logout-btn-mobile" class="bg-[#C6A766] text-black w-full py-2 rounded-md font-semibold">Logout</button>
+</div>
+</nav>
+
+<!-- 🌟 STYLES -->
+<style>
+  /* Base nav link style */
+  .nav-link {
+    color: white;
+    transition: color 0.3s ease;
+  }
+
+  /* Animated underline (desktop + mobile) */
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0%;
+    height: 2px;
+    background-color: #C6A766;
+    transition: width 0.3s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .nav-link:hover {
+    color: #C6A766;
+  }
+
+  /* Active link style */
+  .nav-link.active {
+    color: #C6A766;
+  }
+
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  /* For mobile menu active state */
+  #mobile-menu .nav-link.active {
+    color: #C6A766;
+    font-weight: 600;
+  }
+</style>
+
+<!-- 🌟 SCRIPT -->
+<script>
+  // Highlight active link with metallic gold + underline
+  const currentPage = window.location.pathname.split("/").pop();
+  document.querySelectorAll(".nav-link").forEach(link => {
+    if (link.getAttribute("data-page") === currentPage) {
+      link.classList.add("active");
+    }
+  });
+
+  // Mobile menu toggle
+  const toggle = document.getElementById("mobile-menu-toggle");
+  const menu = document.getElementById("mobile-menu");
+  toggle.addEventListener("click", () => menu.classList.toggle("hidden"));
+</script>

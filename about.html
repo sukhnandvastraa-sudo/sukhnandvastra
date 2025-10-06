@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>About Us | Sukhnand Vastra</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { primary: '#225845', gold: '#C6A766' },
+          fontFamily: { inter: ['Inter','sans-serif'], instrument: ['Instrument Sans','sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    .anim-item { opacity: 0; transition: transform 800ms cubic-bezier(.2,.9,.2,1), opacity 600ms ease; }
+    .anim-up    { transform: translateY(-40px) scale(.985); }
+    .anim-left  { transform: translateX(-60px) scale(.985); }
+    .anim-right { transform: translateX(60px)  scale(.985); }
+    .anim-item.in { transform: none; opacity: 1; }
+    .card { background: rgba(17,17,17,0.6); border: 1px solid rgba(255,255,255,0.03); backdrop-filter: blur(6px); }
+    .card:hover { box-shadow: 0 18px 40px rgba(0,0,0,0.55); transform: translateY(-6px); transition: .25s; }
+    @media (max-width:768px){.anim-left,.anim-right{transform:translateY(30px)}.anim-item.in{transform:none;opacity:1}}
+  </style>
+</head>
+<body class="font-instrument">
+
+  <div id="navbar-placeholder"></div>
+  <!-- Background image and overlay -->
+<div class="fixed inset-0 bg-[url('assets/bg-about.jpg')] bg-cover bg-center bg-fixed"></div>
+<div class="fixed inset-0 bg-black/40"></div>
+
+<main class="relative z-10 max-w-7xl mx-auto px-6 py-16 space-y-20">
+
+
+  <main class="max-w-7xl mx-auto px-6 py-16 space-y-20">
+    <!-- MAIN OWNER SECTION -->
+    <!-- 👇 Added mt-24 for clean space below navbar -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mt-24">
+      <div class="flex justify-center md:justify-start">
+        <div id="bizImg" class="anim-item anim-up w-72 md:w-64 lg:w-80 card rounded-2xl overflow-hidden">
+          <img src="assets/about-photo.jpg" alt="Our Studio" class="w-full h-64 object-cover">
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <div id="descCard" class="anim-item anim-left card rounded-2xl p-6 md:p-8 w-full">
+          <h2 class="text-2xl font-bold text-gold mb-3">Who we are</h2>
+          <p class="text-gray-300 leading-relaxed mb-4">
+            Sukhnand Vastra is a celebration of handcrafted elegance. We blend heritage techniques with contemporary silhouettes to create timeless garments — ethically sourced, lovingly made.
+          </p>
+          <p class="text-gray-300 leading-relaxed">
+            Our collections are designed for people who value craftsmanship and story. From hand-embellished pieces to everyday staples, every item reflects our commitment to quality and identity.
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-center md:justify-end">
+        <div id="ownerImg" class="anim-item anim-right w-48 md:w-56 lg:w-64 card rounded-2xl overflow-hidden">
+     <img src="assets/owner-photo.png" alt="Founder" class="w-full h-96 object-cover">
+</div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section>
+      <h3 class="text-3xl text-center font-bold text-gold mb-8">Our Partners</h3>
+      <div id="partners-list" class="space-y-20"></div>
+      <p id="partners-empty" class="text-black-400 italic text-center mt-6">
+        We would love to partner with like-minded brands and visionaries. Become our partner today.
+      </p>
+    </section>
+
+    <!-- COLLABORATORS -->
+    <section>
+      <h3 class="text-3xl text-center font-bold text-gold mb-8">Our Collaborators</h3>
+      <div id="collaborators-list" class="space-y-20"></div>
+      <p id="collaborators-empty" class="text-black-400 italic text-center mt-6">
+        We’re always open to new creative collaborations. Reach out and let’s create something beautiful together.
+      </p>
+    </section>
+  </main>
+
+  <!-- <footer class="bg-gray-100 py-6 text-center text-sm text-gray-500">
+    Copyright © 2025 Sukhnand Vastra
+  </footer> -->
+
+  <script src="js/main.js"></script>
+
+  <script>
+    function playAboutEntrance() {
+      const items = [bizImg, descCard, ownerImg].filter(Boolean);
+      items.forEach((el, i) => setTimeout(() => el.classList.add('in'), i * 200));
+    }
+
+    function createProfileLayout(item) {
+      return `
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mt-20">
+        <div class="flex justify-center md:justify-start">
+          <div class="anim-item anim-up w-72 md:w-64 lg:w-80 card rounded-2xl overflow-hidden">
+            <img src="${item.businessImage || 'assets/about-photo.jpg'}" alt="${item.name}" class="w-full h-64 object-cover">
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <div class="anim-item anim-left card rounded-2xl p-6 md:p-8 w-full">
+            <h2 class="text-2xl font-bold text-gold mb-3">${item.name}</h2>
+            <p class="text-gray-300 leading-relaxed">${item.description || ''}</p>
+          </div>
+        </div>
+        <div class="flex justify-center md:justify-end">
+          <div class="anim-item anim-right w-48 md:w-56 lg:w-64 card rounded-2xl overflow-hidden">
+            <img src="${item.photo || 'assets/owner-photo.jpg'}" alt="${item.name}" class="w-full h-64 object-cover">
+          </div>
+        </div>
+      </section>`;
+    }
+
+    function renderList(key, containerId, emptyId) {
+      const arr = JSON.parse(localStorage.getItem(key) || '[]');
+      const container = document.getElementById(containerId);
+      const empty = document.getElementById(emptyId);
+      container.innerHTML = '';
+      if (!arr.length) { empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+      arr.forEach(item => container.insertAdjacentHTML('beforeend', createProfileLayout(item)));
+      setTimeout(() => document.querySelectorAll('.anim-item').forEach((el, i) =>
+        setTimeout(() => el.classList.add('in'), i * 120)), 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(playAboutEntrance, 150);
+      renderList('partners', 'partners-list', 'partners-empty');
+      renderList('collaborations', 'collaborators-list', 'collaborators-empty');
+    });
+  </script>
+</body>
+</html>

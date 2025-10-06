@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Cart | Sukhnand Vastra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function(){ emailjs.init("w8NBYghLP4IMoHvNR"); })(); 
+</script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="font-instrument">
+  <div id="navbar-placeholder"></div>
+
+  <div class="fixed inset-0 bg-[url('assets/bg-shop.jpg')] bg-cover bg-center bg-fixed"></div>
+  <div class="fixed inset-0 bg-black/30"></div>
+
+  <main class="relative z-10 min-h-screen pt-28 pb-16 px-6 text-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl text-center text-[#C6A766] font-semibold mb-8">Your Cart</h2>
+      <div id="cartContainer" class="bg-black/60 rounded-2xl p-6"></div>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <!-- QR Payment Popup -->
+<div id="qrPaymentPopup" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+  <div class="bg-white text-black rounded-xl p-6 w-96 text-center relative">
+    <button id="closeQrPopup" class="absolute top-2 right-2 text-gray-600 hover:text-black">✖</button>
+    <h3 class="text-xl font-semibold mb-2">Scan to Pay</h3>
+    <p class="text-sm mb-3 text-gray-700">Use Google Pay / PhonePe / Paytm</p>
+    <img src="assets/upi-qr.jpg" alt="UPI QR" class="w-56 h-56 mx-auto rounded-lg border border-gray-300 mb-4">
+    <p class="font-semibold">Sukhnand Vastra</p>
+    <p class="text-sm text-gray-600 mb-4">UPI ID: <span class="font-mono">sukhnandvastra@upi</span></p>
+    <button id="confirmOnlinePaymentBtn"
+      class="bg-[#C6A766] text-black px-6 py-2 rounded font-semibold hover:bg-[#b59552] transition">
+      I’ve Completed the Payment
+    </button>
+  </div>
+</div>
+
+
+<!-- ✅ Place this block at very end, after all scripts -->
+<div id="qrPaymentPopup" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+  <div class="bg-white text-black rounded-xl p-6 w-96 text-center relative">
+    <button id="closeQrPopup" class="absolute top-2 right-2 text-gray-600 hover:text-black">✖</button>
+    <h3 class="text-xl font-semibold mb-2">Scan to Pay</h3>
+    <p class="text-sm mb-3 text-gray-700">Use Google Pay / PhonePe / Paytm</p>
+    <img src="assets/upi-qr.jpg" alt="UPI QR" class="w-56 h-56 mx-auto rounded-lg border border-gray-300 mb-4">
+    <p class="font-semibold">Sukhnand Vastra</p>
+    <p class="text-sm text-gray-600 mb-4">UPI ID: <span class="font-mono">sukhnandvastra@upi</span></p>
+    <button id="confirmOnlinePaymentBtn"
+      class="bg-[#C6A766] text-black px-6 py-2 rounded font-semibold hover:bg-[#b59552] transition">
+      I’ve Completed the Payment
+    </button>
+  </div>
+</div>
+
+
+<script src="js/main.js"></script>
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
+
+</body>
+</html>

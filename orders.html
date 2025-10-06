@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orders | Sukhnand Vastra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="font-instrument bg-gray-50">
+  <div class="max-w-6xl mx-auto p-10">
+    <h1 class="text-3xl font-bold text-[#C6A766] mb-6 text-center">Customer Orders</h1>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border border-gray-300 rounded-xl overflow-hidden text-sm">
+        <thead class="bg-[#225845] text-white">
+          <tr>
+            <th class="py-3 px-4 text-left">#</th>
+            <th class="py-3 px-4 text-left">Customer</th>
+            <th class="py-3 px-4 text-left">Product</th>
+            <th class="py-3 px-4 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable" class="bg-white divide-y divide-gray-200"></tbody>
+      </table>
+    </div>
+
+    <p id="noOrders" class="text-center text-gray-500 italic mt-8 hidden">
+      No orders found yet.
+    </p>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const tableBody = document.getElementById("ordersTable");
+      const noOrdersMsg = document.getElementById("noOrders");
+
+      if (!orders.length) {
+        noOrdersMsg.classList.remove("hidden");
+        return;
+      }
+
+      tableBody.innerHTML = orders.map((order, index) => `
+        <tr>
+          <td class="py-3 px-4">${index + 1}</td>
+          <td class="py-3 px-4">${order.customer || "—"}</td>
+          <td class="py-3 px-4">${order.product || "—"}</td>
+          <td class="py-3 px-4">
+            <button onclick="viewOrder(${index})" class="text-[#225845] underline font-medium">
+              View
+            </button>
+          </td>
+        </tr>
+      `).join("");
+    });
+
+    function viewOrder(i) {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const o = orders[i];
+      if (!o) return alert("Order not found.");
+
+      alert(
+        `📦 Order Details:\n\n` +
+        `Customer: ${o.customer}\n` +
+        `Email: ${o.email}\n` +
+        `Product: ${o.product}\n` +
+        `Size: ${o.size}\n` +
+        `Quantity: ${o.quantity}\n` +
+        `Total: ₹${o.price}\n` +
+        `Address: ${o.address}\n` +
+        `Date: ${o.date}`
+      );
+    }
+  </script>
+
+
+
+  <script src="js/main.js"></script>
+
+</body>
+</html>

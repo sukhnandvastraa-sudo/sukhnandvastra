@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Contact Us | Sukhnand Vastra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-instrument">
+  <div id="navbar-placeholder"></div>
+
+  <div class="fixed inset-0 bg-[url('assets/bg-contact.jpg')] bg-cover bg-center bg-fixed"></div>
+  <div class="fixed inset-0 bg-black/45"></div>
+
+  <main class="relative z-10 min-h-screen pt-28 pb-16 px-6 flex items-center justify-center">
+    <form id="contactForm" class="bg-white/10 backdrop-blur-md p-8 rounded-lg max-w-md w-full text-white">
+      <h2 class="text-2xl mb-4">Contact Us</h2>
+
+      <label for="contactName" class="block mb-1">Name:</label>
+      <input id="contactName" type="text" placeholder="Your name" class="w-full mb-3 p-2 rounded bg-white/10" required>
+
+      <label for="contactEmail" class="block mb-1">Email:</label>
+      <input id="contactEmail" type="email" placeholder="Email" class="w-full mb-3 p-2 rounded bg-white/10" required>
+
+      <label for="contactSubject" class="block mb-1">Subject:</label>
+      <input id="contactSubject" type="text" placeholder="Subject" class="w-full mb-3 p-2 rounded bg-white/10">
+
+      <label for="contactMessage" class="block mb-1">Message:</label>
+      <textarea id="contactMessage" rows="5" placeholder="Message" class="w-full mb-3 p-2 rounded bg-white/10"></textarea>
+
+      <button type="submit" class="w-full bg-[#C6A766] text-black py-2 rounded">Submit</button>
+    </form>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/forms.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function() {
+    emailjs.init("w8NBYghLP4IMoHvNR"); // from EmailJS dashboard
+  })();
+</script>
+
+
+</body>
+</html>

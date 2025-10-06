@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Dashboard | Sukhnand Vastra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-instrument">
+  <div id="navbar-placeholder"></div>
+
+  <div class="fixed inset-0 bg-[url('assets/bg-home.jpg')] bg-cover bg-center bg-fixed"></div>
+  <div class="fixed inset-0 bg-black/40"></div>
+
+  <main class="relative z-10 min-h-screen pt-28 px-6">
+    <div class="max-w-6xl mx-auto text-white">
+      <h2 class="text-3xl font-semibold mb-6">Admin Dashboard</h2>
+
+      <!-- Add Product -->
+      <section class="bg-white/5 p-6 rounded mb-8">
+        <h3 class="text-xl mb-4">Add Product</h3>
+        <form id="adminAddProduct" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input id="ap_name" placeholder="Name" class="p-3 rounded bg-white/10" required>
+          <input id="ap_price" placeholder="Price" type="number" class="p-3 rounded bg-white/10" required>
+          <input id="ap_image" placeholder="Image URL (assets/...)" class="p-3 rounded bg-white/10" required>
+          <select id="ap_type" class="p-3 rounded bg-white/10">
+            <option value="shop">Shop</option>
+            <option value="rent">Rent</option>
+          </select>
+          <textarea id="ap_desc" placeholder="Short description" class="p-3 rounded bg-white/10 md:col-span-2"></textarea>
+          <button type="submit" class="bg-[#C6A766] text-black py-2 rounded md:col-span-2 font-semibold hover:bg-[#b49750] transition">Add</button>
+        </form>
+      </section>
+
+      <!-- Product List -->
+      <section class="mb-8">
+        <h3 class="text-xl mb-4">Products</h3>
+        <div id="adminProductList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+      </section>
+
+      <!-- Orders -->
+      <section class="mb-8">
+        <h3 class="text-xl mb-4">Orders</h3>
+        <div id="ordersTableContainer" class="overflow-x-auto bg-white/5 p-4 rounded-lg">
+          <!-- table injected by JS -->
+        </div>
+      </section>
+
+      <!-- Submissions -->
+      <section class="mb-16">
+        <h3 class="text-xl mb-4">Form Submissions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-white/5 p-4 rounded">
+            <h4 class="font-semibold mb-3">Collaborators</h4>
+<form id="addCollaboratorForm" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 text-black">
+  <input id="collab_name" placeholder="Name" class="p-2 rounded bg-white/80" required>
+  <input id="collab_email" placeholder="Email" type="email" class="p-2 rounded bg-white/80" required>
+  <input id="collab_brand" placeholder="Brand Name" class="p-2 rounded bg-white/80 md:col-span-2">
+  <input id="collab_photo" placeholder="Photo URL (assets/...)" class="p-2 rounded bg-white/80 md:col-span-2">
+  <textarea id="collab_desc" placeholder="Short description" class="p-2 rounded bg-white/80 md:col-span-2"></textarea>
+  <button class="bg-[#C6A766] text-black py-2 rounded font-semibold hover:bg-[#b49750] transition md:col-span-2">Add Collaborator</button>
+</form>
+<div id="adminCollabs" class="space-y-3 text-sm"></div>
+
+<!-- ===================== PARTNER MANAGEMENT ===================== -->
+<h4 class="font-semibold mb-3 mt-10">Partners</h4>
+<form id="addPartnerForm" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 text-black">
+  <input id="partner_name" placeholder="Name" class="p-2 rounded bg-white/80" required>
+  <input id="partner_email" placeholder="Email" type="email" class="p-2 rounded bg-white/80" required>
+  <input id="partner_brand" placeholder="Brand Name" class="p-2 rounded bg-white/80 md:col-span-2">
+  <input id="partner_photo" placeholder="Photo URL (assets/...)" class="p-2 rounded bg-white/80 md:col-span-2">
+  <textarea id="partner_desc" placeholder="Short description" class="p-2 rounded bg-white/80 md:col-span-2"></textarea>
+  <button class="bg-[#C6A766] text-black py-2 rounded font-semibold hover:bg-[#b49750] transition md:col-span-2">Add Partner</button>
+</form>
+<div id="adminPartners" class="space-y-3 text-sm"></div>
+
+
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    // protect admin
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (!user || user.role !== "admin") {
+      alert("Access denied. Admins only.");
+      window.location.href = "index.html";
+    }
+
+    // product management
+    function refreshAdminProducts() {
+      const shop = JSON.parse(localStorage.getItem("shopProducts") || "[]");
+      const rent = JSON.parse(localStorage.getItem("rentProducts") || "[]");
+      const all = shop.concat(rent);
+      const container = document.getElementById("adminProductList");
+      container.innerHTML = all.map(p => `
+        <div class="bg-white/5 p-4 rounded text-white">
+          <img src="${p.image}" class="w-full h-40 object-cover rounded mb-3"/>
+          <h4 class="font-semibold">${p.name}</h4>
+          <p class="text-sm text-gray-300">${p.desc || ''}</p>
+          <p class="mt-2 font-semibold">₹${p.price}</p>
+          <div class="mt-3 flex space-x-2">
+            <button data-id="${p.id}" class="del-btn bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">Delete</button>
+          </div>
+        </div>
+      `).join('');
+      document.querySelectorAll(".del-btn").forEach(b => {
+        b.addEventListener("click", () => {
+          const id = parseInt(b.dataset.id);
+          let s = JSON.parse(localStorage.getItem("shopProducts")||"[]");
+          let r = JSON.parse(localStorage.getItem("rentProducts")||"[]");
+          s = s.filter(x=>x.id!==id);
+          r = r.filter(x=>x.id!==id);
+          localStorage.setItem("shopProducts", JSON.stringify(s));
+          localStorage.setItem("rentProducts", JSON.stringify(r));
+          refreshAdminProducts();
+        });
+      });
+    }
+
+    document.getElementById("adminAddProduct").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      const name = document.getElementById("ap_name").value.trim();
+      const price = parseFloat(document.getElementById("ap_price").value);
+      const img = document.getElementById("ap_image").value.trim();
+      const type = document.getElementById("ap_type").value;
+      const desc = document.getElementById("ap_desc").value.trim();
+      const obj = { id: Date.now(), name, price, image: img, desc };
+      if (type === "shop") {
+        const s = JSON.parse(localStorage.getItem("shopProducts")||"[]"); s.push(obj); localStorage.setItem("shopProducts", JSON.stringify(s));
+      } else {
+        const r = JSON.parse(localStorage.getItem("rentProducts")||"[]"); r.push(obj); localStorage.setItem("rentProducts", JSON.stringify(r));
+      }
+      e.target.reset();
+      refreshAdminProducts();
+      alert("Product added successfully!");
+    });
+
+    // orders management
+    function renderOrdersTable() {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const container = document.getElementById("ordersTableContainer");
+      if (!orders.length) {
+        container.innerHTML = `<p class="text-gray-300 py-6 text-center">No orders yet.</p>`;
+        return;
+      }
+
+      const rows = orders.map((o, i) => {
+        const itemsLabel = o.items.map(it => `${it.name} (x${it.qty})`).join(", ");
+        const paymentBtn = o.paymentStatus === "Paid"
+          ? `<button class="paid-btn bg-green-500 text-white px-3 py-1 rounded text-xs" data-index="${i}" disabled>Paid</button>`
+          : `<button class="mark-paid bg-red-600 text-white px-3 py-1 rounded text-xs" data-index="${i}">Not Paid</button>`;
+
+        const deliveryBtn = o.deliveryStatus === "Received"
+          ? `<button class="received-btn bg-green-600 text-white px-3 py-1 rounded text-xs" data-index="${i}" disabled>Received</button>`
+          : `<button class="mark-received bg-blue-600 text-white px-3 py-1 rounded text-xs" data-index="${i}">${o.deliveryStatus}</button>`;
+
+        return `
+          <tr class="border-b border-white/5">
+            <td class="py-2 px-3">${i+1}</td>
+            <td class="py-2 px-3">${o.customerName}</td>
+            <td class="py-2 px-3">${o.customerEmail}</td>
+            <td class="py-2 px-3">${itemsLabel}</td>
+            <td class="py-2 px-3">₹${o.totalPrice}</td>
+            <td class="py-2 px-3">${paymentBtn}</td>
+            <td class="py-2 px-3">${deliveryBtn}</td>
+            <td class="py-2 px-3"><button class="view-order text-[#C6A766] underline" data-index="${i}">View</button></td>
+          </tr>
+        `;
+      }).join("");
+
+      container.innerHTML = `
+        <table class="min-w-full text-sm text-left">
+          <thead class="text-gray-300">
+            <tr class="border-b border-gray-700">
+              <th class="py-2 px-3">#</th>
+              <th class="py-2 px-3">Customer</th>
+              <th class="py-2 px-3">Email</th>
+              <th class="py-2 px-3">Items</th>
+              <th class="py-2 px-3">Total</th>
+              <th class="py-2 px-3">Payment</th>
+              <th class="py-2 px-3">Delivery</th>
+              <th class="py-2 px-3">Action</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      // wire payment buttons (mark paid) - irreversible
+      document.querySelectorAll(".mark-paid").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = parseInt(btn.dataset.index);
+          const orders = JSON.parse(localStorage.getItem("orders")||"[]");
+          if (!orders[i]) return;
+          orders[i].paymentStatus = "Paid";
+          localStorage.setItem("orders", JSON.stringify(orders));
+          renderOrdersTable();
+        });
+      });
+
+      // wire delivery buttons - mark received (irreversible)
+      document.querySelectorAll(".mark-received").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = parseInt(btn.dataset.index);
+          const orders = JSON.parse(localStorage.getItem("orders")||"[]");
+          if (!orders[i]) return;
+          // if currently "Sent" allow change to "Received"
+          if (orders[i].deliveryStatus !== "Received") {
+            orders[i].deliveryStatus = "Received";
+            localStorage.setItem("orders", JSON.stringify(orders));
+            renderOrdersTable();
+          }
+        });
+      });
+
+      // wire view order details
+      document.querySelectorAll(".view-order").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = parseInt(btn.dataset.index);
+          const orders = JSON.parse(localStorage.getItem("orders")||"[]");
+          const o = orders[i];
+          if (!o) return alert("Order not found");
+          const details = [
+            `Customer: ${o.customerName}`,
+            `Email: ${o.customerEmail}`,
+            `Date: ${o.date}`,
+            `Payment Mode: ${o.paymentMode}`,
+            `Payment Status: ${o.paymentStatus}`,
+            `Delivery Status: ${o.deliveryStatus}`,
+            `Total: ₹${o.totalPrice}`,
+            `Items:`,
+            ...o.items.map(it => `  • ${it.name} — ${it.qty} × ₹${it.price} (Size ${it.size})`)
+          ].join("\n");
+          alert(details);
+        });
+      });
+    }
+
+    function refreshSubmissions() {
+      const collabs = JSON.parse(localStorage.getItem("collaborations") || "[]");
+      const contacts = JSON.parse(localStorage.getItem("contacts") || "[]");
+      const ctn = document.getElementById("adminCollabs");
+      const ctc = document.getElementById("adminContacts");
+      ctn.innerHTML = collabs.length ? collabs.map(x=>`<div class="border border-gray-600 p-2 rounded"><b>${x.name}</b> (${x.email})<br/><b>Brand:</b> ${x.brand}<br/>${x.message}</div>`).join("") : "<p>No collaborations yet.</p>";
+      ctc.innerHTML = contacts.length ? contacts.map(x=>`<div class="border border-gray-600 p-2 rounded"><b>${x.name}</b> (${x.email})<br/>${x.message}</div>`).join("") : "<p>No contacts yet.</p>";
+    }
+    // ---------------- COLLABORATOR MANAGEMENT ----------------
+function renderCollaboratorsAdmin() {
+  const collabs = JSON.parse(localStorage.getItem("collaborations") || "[]");
+  const container = document.getElementById("adminCollabs");
+  if (!collabs.length) {
+    container.innerHTML = `<p class="text-gray-300">No collaborators yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = collabs.map((c, i) => `
+    <div class="border border-gray-600 p-3 rounded">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="font-semibold text-[#C6A766]">${c.name}</p>
+          <p class="text-xs text-gray-300">${c.email}</p>
+          <p class="text-sm">${c.brand || ''}</p>
+        </div>
+        <button class="remove-collab text-red-500 text-xs underline" data-index="${i}">Remove</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".remove-collab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = parseInt(btn.dataset.index);
+      const collabs = JSON.parse(localStorage.getItem("collaborations") || "[]");
+      collabs.splice(idx, 1);
+      localStorage.setItem("collaborations", JSON.stringify(collabs));
+      renderCollaboratorsAdmin();
+      alert("Collaborator removed.");
+    });
+  });
+}
+
+// Handle adding new collaborator
+document.getElementById("addCollaboratorForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("collab_name").value.trim();
+  const email = document.getElementById("collab_email").value.trim();
+  const brand = document.getElementById("collab_brand").value.trim();
+  const photo = document.getElementById("collab_photo").value.trim() || "assets/owner-photo.jpg";
+  const desc = document.getElementById("collab_desc").value.trim();
+  if (!name || !email) return alert("Name and email are required.");
+
+  const collabs = JSON.parse(localStorage.getItem("collaborations") || "[]");
+  collabs.push({ name, email, brand, photo, description: desc });
+  localStorage.setItem("collaborations", JSON.stringify(collabs));
+
+  e.target.reset();
+  renderCollaboratorsAdmin();
+  alert("Collaborator added successfully!");
+});
+
+// call initially
+renderCollaboratorsAdmin();
+
+// ---------------- PARTNER MANAGEMENT ----------------
+function renderPartnersAdmin() {
+  const partners = JSON.parse(localStorage.getItem("partners") || "[]");
+  const container = document.getElementById("adminPartners");
+  if (!partners.length) {
+    container.innerHTML = `<p class="text-gray-300">No partners yet.</p>`;
+    return;
+  }
+
+  container.innerHTML = partners.map((p, i) => `
+    <div class="border border-gray-600 p-3 rounded">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="font-semibold text-[#C6A766]">${p.name}</p>
+          <p class="text-xs text-gray-300">${p.email}</p>
+          <p class="text-sm">${p.brand || ''}</p>
+        </div>
+        <button class="remove-partner text-red-500 text-xs underline" data-index="${i}">Remove</button>
+      </div>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".remove-partner").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const idx = parseInt(btn.dataset.index);
+      const partners = JSON.parse(localStorage.getItem("partners") || "[]");
+      partners.splice(idx, 1);
+      localStorage.setItem("partners", JSON.stringify(partners));
+      renderPartnersAdmin();
+      alert("Partner removed.");
+    });
+  });
+}
+
+// Handle adding new partner
+document.getElementById("addPartnerForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("partner_name").value.trim();
+  const email = document.getElementById("partner_email").value.trim();
+  const brand = document.getElementById("partner_brand").value.trim();
+  const photo = document.getElementById("partner_photo").value.trim() || "assets/owner-photo.jpg";
+  const desc = document.getElementById("partner_desc").value.trim();
+  if (!name || !email) return alert("Name and email are required.");
+
+  const partners = JSON.parse(localStorage.getItem("partners") || "[]");
+  partners.push({ name, email, brand, photo, description: desc });
+  localStorage.setItem("partners", JSON.stringify(partners));
+
+  e.target.reset();
+  renderPartnersAdmin();
+  alert("Partner added successfully!");
+});
+
+// Call initially
+renderPartnersAdmin();
+
+
+    // init
+    refreshAdminProducts();
+    renderOrdersTable();
+    refreshSubmissions();
+  </script>
+</body>
+</html>

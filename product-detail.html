@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Product Details | Sukhnand Vastra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="font-instrument text-white">
+  <div id="navbar-placeholder"></div>
+
+  <div class="fixed inset-0 bg-[url('assets/bg-shop.jpg')] bg-cover bg-center bg-fixed"></div>
+  <div class="fixed inset-0 bg-black/40"></div>
+
+  <main class="relative z-10 min-h-screen pt-28 pb-16 px-6">
+    <div id="productDetail" class="max-w-5xl mx-auto bg-black/60 rounded-2xl p-8"></div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+
+  <script>
+    // Utility to parse query params
+    function qp(name){ return new URLSearchParams(location.search).get(name); }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const id = parseInt(qp("id"));
+      const type = qp("type") || "shop";
+      if (!id) {
+        document.getElementById("productDetail").innerHTML = "<p class='text-center text-gray-300'>No product selected.</p>";
+        return;
+      }
+      const products = JSON.parse(localStorage.getItem(type === "shop" ? "shopProducts" : "rentProducts") || "[]");
+      const p = products.find(x => x.id == id);
+      if (!p) {
+        document.getElementById("productDetail").innerHTML = "<p class='text-center text-gray-300'>Product not found.</p>";
+        return;
+      }
+
+      document.getElementById("productDetail").innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div><img src="${p.image}" alt="${p.name}" class="rounded-2xl w-full h-96 object-cover shadow-lg"></div>
+          <div>
+            <h2 class="text-3xl font-semibold text-[#C6A766] mb-4">${p.name}</h2>
+            <p class="text-gray-300 mb-4">${p.desc}</p>
+            <p class="text-xl font-bold mb-4">₹${p.price} ${type==='rent' ? '/ day' : ''}</p>
+
+            <div class="mb-4">
+              <p class="font-semibold mb-2">Select Size:</p>
+              <div class="flex gap-2" id="sizeContainer">
+                ${["S","M","L","XL"].map(sz => `<button class="size-btn px-3 py-1 border border-gray-600 rounded hover:bg-[#C6A766] hover:text-black" data-size="${sz}">${sz}</button>`).join("")}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 mb-6">
+              <button id="minus" class="px-3 py-1 bg-gray-800 rounded">-</button>
+              <span id="qty" class="text-lg">1</span>
+              <button id="plus" class="px-3 py-1 bg-gray-800 rounded">+</button>
+            </div>
+
+            <div class="flex gap-3">
+              <button id="addToCart" class="bg-[#C6A766] text-black px-5 py-2 rounded font-semibold">Add to Cart</button>
+              <button id="buyNow" class="bg-[#225845] text-white px-5 py-2 rounded font-semibold">Buy Now</button>
+              <a href="cart.html" class="ml-2 text-sm text-gray-300 underline">View Cart</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // interactions
+      let qty = 1, selectedSize = "";
+      document.getElementById("plus").addEventListener("click", ()=> { qty++; document.getElementById("qty").textContent = qty; });
+      document.getElementById("minus").addEventListener("click", ()=> { if (qty>1) qty--; document.getElementById("qty").textContent = qty; });
+
+      document.querySelectorAll(".size-btn").forEach(btn => {
+        btn.addEventListener("click", ()=> {
+          document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("bg-[#C6A766]","text-black"));
+          btn.classList.add("bg-[#C6A766]","text-black");
+          selectedSize = btn.dataset.size;
+        });
+      });
+
+      document.getElementById("addToCart").addEventListener("click", ()=> {
+        if (!selectedSize) return alert("Please select a size.");
+        addToCartItem({ id: p.id, name: p.name, price: p.price, qty, size: selectedSize, type, image: p.image });
+        alert("Added to cart.");
+      });
+
+      // ✅ Buy Now functionality with QR popup
+      document.getElementById("buyNow").addEventListener("click", ()=> {
+        if (!selectedSize) return alert("Please select a size.");
+
+        const price = p.price * qty;
+        const name = prompt("Enter your full name:");
+        const email = prompt("Enter your email:");
+        const address = prompt("Enter your address:");
+        const phone = prompt("Enter your phone number:");
+        if (!name || !email) return alert("Name & Email required.");
+
+        const payOnline = confirm(`Total ₹${price}\nPress OK to Pay Online or Cancel for Cash on Delivery`);
+        if (payOnline) {
+          document.getElementById("qrPaymentPopup").classList.remove("hidden");
+          document.getElementById("confirmOnlinePaymentBtn").onclick = () => {
+            document.getElementById("qrPaymentPopup").classList.add("hidden");
+            finalizeOrder("Online","Paid",{name,email,address,phone},
+              [{ id:p.id, name:p.name, price:p.price, qty, size:selectedSize, type, image:p.image }],
+              price);
+          };
+        } else {
+          finalizeOrder("Cash on Delivery","Not Paid",{name,email,address,phone},
+            [{ id:p.id, name:p.name, price:p.price, qty, size:selectedSize, type, image:p.image }],
+            price);
+        }
+      });
+    });
+
+    // ✅ Shared finalizeOrder (same as cart.js)
+    function finalizeOrder(paymentMode, paymentStatus, customer, cart, total){
+      const order = {
+        id:"ORD-"+Date.now(),
+        customerName:customer.name,
+        customerEmail:customer.email,
+        customerPhone:customer.phone,
+        customerAddress:customer.address,
+        items:cart,
+        totalPrice:total,
+        paymentMode,
+        paymentStatus,
+        deliveryStatus:"Sent",
+        date:new Date().toLocaleString()
+      };
+      const orders = JSON.parse(localStorage.getItem("orders")||"[]");
+      orders.push(order);
+      localStorage.setItem("orders",JSON.stringify(orders));
+      alert("Order placed successfully!");
+      window.location.href="shop.html";
+    }
+  </script>
+
+  <!-- ✅ Single QR Payment Popup -->
+  <div id="qrPaymentPopup" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-white text-black rounded-xl p-6 w-96 text-center relative">
+      <button id="closeQrPopup" class="absolute top-2 right-2 text-gray-600 hover:text-black">✖</button>
+      <h3 class="text-xl font-semibold mb-2">Scan to Pay</h3>
+      <p class="text-sm mb-3 text-gray-700">Use Google Pay / PhonePe / Paytm</p>
+      <img src="assets/upi-qr.jpg" alt="UPI QR" class="w-56 h-56 mx-auto rounded-lg border border-gray-300 mb-4">
+      <p class="font-semibold">Sukhnand Vastra</p>
+      <p class="text-sm text-gray-600 mb-4">UPI ID: <span class="font-mono">sukhnandvastra@upi</span></p>
+      <button id="confirmOnlinePaymentBtn"
+        class="bg-[#C6A766] text-black px-6 py-2 rounded font-semibold hover:bg-[#b59552] transition">
+        I’ve Completed the Payment
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const popup = document.getElementById("qrPaymentPopup");
+      const closeBtn = document.getElementById("closeQrPopup");
+      if (closeBtn) closeBtn.addEventListener("click", () => popup.classList.add("hidden"));
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  (function() {
+    emailjs.init("w8NBYghLP4IMoHvNR"); // from EmailJS dashboard
+  })();
+</script>
+
+</body>
+</html>

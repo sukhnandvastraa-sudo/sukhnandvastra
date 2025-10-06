@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Shop | Sukhnand Vastra</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="font-instrument">
+  <div id="navbar-placeholder"></div>
+
+  <div class="fixed inset-0 bg-[url('assets/bg-shop.jpg')] bg-cover bg-center bg-fixed"></div>
+  <div class="fixed inset-0 bg-black/30"></div>
+
+  <main class="relative z-10 min-h-screen pt-28 pb-16 px-6">
+    <h2 class="text-3xl text-center text-[#C6A766] font-semibold mb-8">Shop Collection</h2>
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", ()=> {
+      renderProducts("shop");
+      // product cards are clickable via productCardHtml's onclick
+    });
+  </script>
+</body>
+</html>
