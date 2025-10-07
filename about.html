@@ -121,22 +121,37 @@
       </section>`;
     }
 
-    function renderList(key, containerId, emptyId) {
-      const arr = JSON.parse(localStorage.getItem(key) || '[]');
-      const container = document.getElementById(containerId);
-      const empty = document.getElementById(emptyId);
-      container.innerHTML = '';
-      if (!arr.length) { empty.classList.remove('hidden'); return; }
-      empty.classList.add('hidden');
-      arr.forEach(item => container.insertAdjacentHTML('beforeend', createProfileLayout(item)));
-      setTimeout(() => document.querySelectorAll('.anim-item').forEach((el, i) =>
-        setTimeout(() => el.classList.add('in'), i * 120)), 300);
-    }
+    function renderList(key, containerId, emptyId, filterAdminOnly = false) {
+  let arr = JSON.parse(localStorage.getItem(key) || '[]');
+  
+  // ✅ Filter collaborators to only show admin-added ones
+  if (filterAdminOnly) {
+    arr = arr.filter(item => item.source === "admin");
+  }
+
+  const container = document.getElementById(containerId);
+  const empty = document.getElementById(emptyId);
+  container.innerHTML = '';
+  
+  if (!arr.length) {
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  arr.forEach(item => container.insertAdjacentHTML('beforeend', createProfileLayout(item)));
+
+  setTimeout(() => {
+    document.querySelectorAll('.anim-item').forEach((el, i) =>
+      setTimeout(() => el.classList.add('in'), i * 120));
+  }, 300);
+}
+
 
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(playAboutEntrance, 150);
       renderList('partners', 'partners-list', 'partners-empty');
-      renderList('collaborations', 'collaborators-list', 'collaborators-empty');
+      renderList('collaborations', 'collaborators-list', 'collaborators-empty', true);
     });
   </script>
 </body>

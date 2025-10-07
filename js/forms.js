@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("contacts", JSON.stringify(contacts));
 
       // --- EmailJS send mail ---
-      emailjs.send("service_xxxxx", "template_contact_us", {
+      emailjs.send("service_uci4kud", "template_cykzx2b", {
         to_email: "sukhnandvastraa@gmail.com",
         name,
         email,
